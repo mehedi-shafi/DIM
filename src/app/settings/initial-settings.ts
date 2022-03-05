@@ -1,5 +1,6 @@
 import { defaultSettings, Settings as DimApiSettings } from '@destinyitemmanager/dim-api-types';
 import { defaultLanguage } from 'app/i18n';
+import { ArmorStatHashes } from 'app/loadout-builder/types';
 
 export const enum LoadoutSort {
   ByEditTime,
@@ -10,8 +11,6 @@ export const enum LoadoutSort {
  * We extend the settings interface so we can try out new settings before committing them to dim-api-types
  */
 export interface Settings extends DimApiSettings {
-  /** How many spaces to clear when using Farming Mode(make space). */
-  inventoryClearSpaces: number;
   /** Display perks as a list instead of a grid. */
   perkList: boolean;
   loadoutSort: LoadoutSort;
@@ -19,15 +18,18 @@ export interface Settings extends DimApiSettings {
   itemFeedExpanded: boolean;
   /** Pull from postmaster is an irreversible action and some people don't want to accidentally hit it. */
   hidePullFromPostmaster: boolean;
+  readonly loStatOrderByClass: {
+    [key: number]: ArmorStatHashes[];
+  };
 }
 
 export const initialSettingsState: Settings = {
   ...defaultSettings,
   language: defaultLanguage(),
-  inventoryClearSpaces: 1,
   perkList: true,
   loadoutSort: LoadoutSort.ByEditTime,
   itemFeedHideTagged: true,
   itemFeedExpanded: false,
   hidePullFromPostmaster: false,
+  loStatOrderByClass: {},
 };
