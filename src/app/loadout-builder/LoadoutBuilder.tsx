@@ -166,7 +166,6 @@ export default function LoadoutBuilder({
       statOrder,
       pinnedItems,
       excludedItems,
-      subclass,
       selectedStoreId,
       statFilters,
       modPicker,
@@ -174,6 +173,10 @@ export default function LoadoutBuilder({
     },
     lbDispatch,
   ] = useLbState({ defs, stores, initialLoadout, customStatsByClass, loStatOrderByClass });
+
+  // TODO: If the loadout is for a class we don't have, short-circuit and show an error
+  // TODO: explain better why we have no results
+
   const loadoutParameters: LoadoutParameters = loadout.parameters ?? emptyObject();
   const lockedExoticHash = loadoutParameters.exoticArmorHash;
 

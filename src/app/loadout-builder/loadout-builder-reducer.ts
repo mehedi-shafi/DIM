@@ -1,6 +1,5 @@
 import {
   AssumeArmorMasterwork,
-  defaultLoadoutParameters,
   LoadoutParameters,
   LockArmorEnergyType,
 } from '@destinyitemmanager/dim-api-types';
@@ -9,39 +8,33 @@ import { t } from 'app/i18next-t';
 import { DimItem, PluggableInventoryItemDefinition } from 'app/inventory/item-types';
 import { DimStore } from 'app/inventory/store-types';
 import { getCurrentStore } from 'app/inventory/stores-helpers';
-import { DimLoadoutItem, Loadout } from 'app/loadout-drawer/loadout-types';
-import {
-  createSubclassDefaultSocketOverrides,
-  findItemForLoadout,
-} from 'app/loadout-drawer/loadout-utils';
+import { Loadout } from 'app/loadout-drawer/loadout-types';
 import { showNotification } from 'app/notifications/notifications';
 import { armor2PlugCategoryHashesByName } from 'app/search/d2-known-values';
 import { emptyObject } from 'app/utils/empty';
-import { getSocketsByCategoryHashes } from 'app/utils/socket-utils';
 import { DestinyClass } from 'bungie-api-ts/destiny2';
-import { BucketHashes, SocketCategoryHashes } from 'data/d2/generated-enums';
 import _ from 'lodash';
 import { useReducer } from 'react';
-import { isLoadoutBuilderItem } from '../loadout/item-utils';
 import { statFiltersFromLoadoutParamaters, statOrderFromLoadoutParameters } from './loadout-params';
-import {
-  ArmorSet,
-  ArmorStatHashes,
-  ExcludedItems,
-  LockableBucketHashes,
-  PinnedItems,
-  StatFilters,
-} from './types';
+import { ArmorSet, ArmorStatHashes, ExcludedItems, PinnedItems, StatFilters } from './types';
 
 export interface LoadoutBuilderState {
-  loadoutParameters: LoadoutParameters;
-  // TODO: also fold statOrder, statFilters into loadoutParameters
+  /**
+   * The loadout we are choosing items for. This includes the LoadoutParameters
+   * that specify mods, etc. A new loadout will be created here if one isn't
+   * passed in.
+   */
+  loadout: Loadout;
+  /** The user's preferred order of stats. */
+  // We pull stat order out here into its own state field (synced with
+  // LoadoutParameters#statConstraints) because the LoadoutParameters version
+  // can't record the order of ignored stats
   statOrder: ArmorStatHashes[]; // stat hashes, including disabled stats
+  // Is this another thing we need to keep around because it models stuff we don't have (e.g. preserving the min/max while a stat is disabled?)
   statFilters: Readonly<StatFilters>;
   pinnedItems: PinnedItems;
   excludedItems: ExcludedItems;
   selectedStoreId?: string;
-  subclass?: DimLoadoutItem;
   modPicker: {
     open: boolean;
     plugCategoryHashWhitelist?: number[];
@@ -60,107 +53,55 @@ export function warnMissingClass(classType: DestinyClass, defs: D2ManifestDefini
   });
 }
 
+interface InitializerArgs {
+  defs: D2ManifestDefinitions;
+  stores: DimStore[];
+  initialLoadout: Loadout;
+  customStatsByClass: {
+    [key: number]: number[];
+  };
+  loStatOrderByClass: {
+    [key: number]: ArmorStatHashes[];
+  };
+}
+
 const lbStateInit = ({
   stores,
-  preloadedLoadout,
-  initialLoadoutParameters,
-  classType,
-  defs,
-}: {
-  stores: DimStore[];
-  preloadedLoadout?: Loadout;
-  initialLoadoutParameters: LoadoutParameters;
-  classType: DestinyClass | undefined;
-  defs: D2ManifestDefinitions;
-}): LoadoutBuilderState => {
-  const pinnedItems: PinnedItems = {};
-
+  initialLoadout,
+  customStatsByClass,
+  loStatOrderByClass,
+}: InitializerArgs): LoadoutBuilderState => {
+  const classType = initialLoadout.classType;
   const matchingClass =
-    classType !== undefined ? stores.find((store) => store.classType === classType) : undefined;
+    classType !== DestinyClass.Unknown
+      ? stores.find((store) => store.classType === classType)
+      : undefined;
 
-  if (classType !== undefined && !matchingClass) {
-    warnMissingClass(classType, defs);
-    // Take out the exotic
-    initialLoadoutParameters = { ...initialLoadoutParameters, exoticArmorHash: undefined };
+  if (classType !== DestinyClass.Unknown && !matchingClass) {
+    // This means we don't have a character that corresponds to this loadout's class
+    // TODO: we won't be able to do much, but we can show the error on the page!
   }
+  const selectedStoreId = (matchingClass ?? getCurrentStore(stores)!).id;
 
-  let selectedStoreId = (matchingClass ?? getCurrentStore(stores)!).id;
+  const loadoutParameters: LoadoutParameters = initialLoadout.parameters ?? emptyObject();
+  const statOrder = loadoutParameters.statConstraints
+    ? statOrderFromLoadoutParameters(loadoutParameters)
+    : statOrderFromSavedPreferences(loStatOrderByClass[classType]) ??
+      statOrderFromCustomStats(customStatsByClass[classType]) ??
+      statOrderFromLoadoutParameters(loadoutParameters);
 
-  let loadoutParams = initialLoadoutParameters;
-  let subclass: DimLoadoutItem | undefined;
+  // TODO: just start saving ignored stats with LO params???
+  // TODO: use negative stat hash for ignored stats?
+  // TODO: backfill stat constraints from saved/custom stats order/enabled
 
-  if (stores.length && preloadedLoadout) {
-    let loadoutStore = getCurrentStore(stores);
-    if (preloadedLoadout.classType === DestinyClass.Unknown) {
-      const includedClasses = new Set(
-        preloadedLoadout.items
-          .map((i) => defs.InventoryItem.get(i.hash)?.classType)
-          .filter((c) => c !== undefined && c !== DestinyClass.Unknown)
-      );
-      if (includedClasses.size === 1) {
-        const includedClassType = includedClasses.values().next().value;
-        loadoutStore =
-          stores.find((store) => store.classType === includedClassType) ?? loadoutStore;
-      }
-    } else {
-      loadoutStore = stores.find((store) => store.classType === preloadedLoadout.classType);
-    }
-
-    if (!loadoutStore) {
-      warnMissingClass(preloadedLoadout.classType, defs);
-    } else {
-      selectedStoreId = loadoutStore.id;
-      // TODO: instead of locking items, show the loadout fixed at the top to compare against and leave all items free
-      for (const loadoutItem of preloadedLoadout.items) {
-        if (loadoutItem.equip) {
-          const allItems = stores.flatMap((s) => s.items);
-          const item = findItemForLoadout(defs, allItems, selectedStoreId, loadoutItem);
-          if (item && isLoadoutBuilderItem(item)) {
-            pinnedItems[item.bucket.hash] = item;
-          } else if (item && item.bucket.hash === BucketHashes.Subclass && item.sockets) {
-            // In LO we populate the default ability plugs because in game you cannot unselect all abilities.
-            const socketOverridesForLO = {
-              ...createSubclassDefaultSocketOverrides(item),
-              ...loadoutItem.socketOverrides,
-            };
-
-            subclass = { ...item, socketOverrides: socketOverridesForLO };
-          }
-        }
-      }
-
-      // Load all parameters from the loadout if we can
-      if (preloadedLoadout.parameters) {
-        loadoutParams = { ...defaultLoadoutParameters, ...preloadedLoadout.parameters };
-      }
-
-      if (!loadoutParams.exoticArmorHash) {
-        const equippedExotic = preloadedLoadout.items
-          .filter((li) => li.equip)
-          .map((li) => defs.InventoryItem.get(li.hash))
-          .find(
-            (i) =>
-              Boolean(i?.equippingBlock?.uniqueLabel) &&
-              LockableBucketHashes.includes(i.inventory?.bucketTypeHash ?? 0)
-          );
-
-        if (equippedExotic) {
-          loadoutParams = { ...loadoutParams, exoticArmorHash: equippedExotic.hash };
-        }
-      }
-    }
-  }
-
-  const statOrder = statOrderFromLoadoutParameters(loadoutParams);
-  const statFilters = statFiltersFromLoadoutParamaters(loadoutParams);
+  const statFilters = statFiltersFromLoadoutParamaters(loadoutParameters);
 
   return {
-    loadoutParameters: loadoutParams,
+    loadout: initialLoadout,
     statOrder,
-    pinnedItems,
+    pinnedItems: emptyObject(),
     excludedItems: emptyObject(),
     statFilters,
-    subclass,
     selectedStoreId,
     modPicker: {
       open: false,
@@ -201,16 +142,12 @@ function lbStateReducer(defs: D2ManifestDefinitions) {
   return (state: LoadoutBuilderState, action: LoadoutBuilderAction): LoadoutBuilderState => {
     switch (action.type) {
       case 'changeCharacter':
+        // We don't reset much since we constrain the stores based on what's selected?
         return {
           ...state,
           selectedStoreId: action.storeId,
           pinnedItems: {},
           excludedItems: {},
-          loadoutParameters: {
-            ...state.loadoutParameters,
-            exoticArmorHash: undefined,
-          },
-          subclass: undefined,
         };
       case 'statFiltersChanged':
         return { ...state, statFilters: action.statFilters };
@@ -283,13 +220,9 @@ function lbStateReducer(defs: D2ManifestDefinitions) {
         };
       }
       case 'lockedModsChanged': {
-        return {
-          ...state,
-          loadoutParameters: {
-            ...state.loadoutParameters,
-            mods: action.lockedMods.map((m) => m.hash),
-          },
-        };
+        return mergeLoadoutParameters(state, {
+          mods: action.lockedMods.map((m) => m.hash),
+        });
       }
       case 'sortOrderChanged': {
         return {
@@ -299,20 +232,14 @@ function lbStateReducer(defs: D2ManifestDefinitions) {
       }
       case 'assumeArmorMasterworkChanged': {
         const { assumeArmorMasterwork } = action;
-        return {
-          ...state,
-          loadoutParameters: { ...state.loadoutParameters, assumeArmorMasterwork },
-        };
+        return mergeLoadoutParameters(state, { assumeArmorMasterwork });
       }
       case 'lockArmorEnergyTypeChanged': {
         const { lockArmorEnergyType } = action;
-        return {
-          ...state,
-          loadoutParameters: { ...state.loadoutParameters, lockArmorEnergyType },
-        };
+        return mergeLoadoutParameters(state, { lockArmorEnergyType });
       }
       case 'addGeneralMods': {
-        const newMods = [...(state.loadoutParameters.mods ?? [])];
+        const newMods = [...(state.loadout.parameters?.mods ?? [])];
         let currentGeneralModsCount =
           newMods.filter(
             (mod) =>
@@ -339,53 +266,46 @@ function lbStateReducer(defs: D2ManifestDefinitions) {
           });
         }
 
-        return {
-          ...state,
-          loadoutParameters: {
-            ...state.loadoutParameters,
-            mods: newMods,
-          },
-        };
+        return mergeLoadoutParameters(state, {
+          mods: newMods,
+        });
       }
       case 'removeLockedMod': {
-        const newMods = [...(state.loadoutParameters.mods ?? [])];
+        const newMods = [...(state.loadout.parameters?.mods ?? [])];
         const indexToRemove = newMods.findIndex((mod) => mod === action.mod.hash);
         if (indexToRemove >= 0) {
           newMods.splice(indexToRemove, 1);
         }
 
-        return {
-          ...state,
-          loadoutParameters: {
-            ...state.loadoutParameters,
-            mods: newMods,
-          },
-        };
+        return mergeLoadoutParameters(state, { mods: newMods });
       }
       case 'updateSubclass': {
-        const { item } = action;
+        // const { item } = action;
 
         return {
           ...state,
-          subclass: { ...item, socketOverrides: createSubclassDefaultSocketOverrides(item) },
+          // TODO: gotta update the item in the loadout??
+          // subclass: { ...item, socketOverrides: createSubclassDefaultSocketOverrides(item) },
         };
       }
       case 'removeSubclass': {
-        return { ...state, subclass: undefined };
+        // TODO: gotta update the item in the loadout??
+        return state; // { ...state, subclass: undefined };
       }
       case 'updateSubclassSocketOverrides': {
-        if (!state.subclass) {
-          return state;
-        }
+        // if (!state.subclass) {
+        //  return state;
+        // }
 
-        const { socketOverrides } = action;
-        return { ...state, subclass: { ...state.subclass, socketOverrides } };
+        // TODO: gotta update the item in the loadout??
+        // const { socketOverrides } = action;
+        return state; // { ...state, subclass: { ...state.subclass, socketOverrides } };
       }
       case 'removeSingleSubclassSocketOverride': {
-        if (!state.subclass) {
-          return state;
-        }
-
+        // if (!state.subclass) {
+        //  return state;
+        // }
+        /*
         const { plug } = action;
         const abilityAndSuperSockets = getSocketsByCategoryHashes(state.subclass.sockets, [
           SocketCategoryHashes.Abilities_Abilities_DarkSubclass,
@@ -428,25 +348,19 @@ function lbStateReducer(defs: D2ManifestDefinitions) {
               : undefined,
           },
         };
+        */
+        return state;
       }
       case 'lockExotic': {
         const { lockedExoticHash } = action;
-        return {
-          ...state,
-          loadoutParameters: {
-            ...state.loadoutParameters,
-            exoticArmorHash: lockedExoticHash,
-          },
-        };
+        return mergeLoadoutParameters(state, {
+          exoticArmorHash: lockedExoticHash,
+        });
       }
       case 'removeLockedExotic': {
-        return {
-          ...state,
-          loadoutParameters: {
-            ...state.loadoutParameters,
-            exoticArmorHash: undefined,
-          },
-        };
+        return mergeLoadoutParameters(state, {
+          exoticArmorHash: undefined,
+        });
       }
       case 'openModPicker':
         return {
@@ -466,16 +380,22 @@ function lbStateReducer(defs: D2ManifestDefinitions) {
   };
 }
 
-export function useLbState(
-  stores: DimStore[],
-  preloadedLoadout: Loadout | undefined,
-  classType: DestinyClass | undefined,
-  initialLoadoutParameters: LoadoutParameters,
-  defs: D2ManifestDefinitions
-) {
-  return useReducer(
-    lbStateReducer(defs),
-    { stores, preloadedLoadout, initialLoadoutParameters, defs, classType },
-    lbStateInit
-  );
+function mergeLoadoutParameters(
+  state: LoadoutBuilderState,
+  params: LoadoutParameters
+): LoadoutBuilderState {
+  return {
+    ...state,
+    loadout: {
+      ...state.loadout,
+      parameters: {
+        ...state.loadout.parameters,
+        ...params,
+      },
+    },
+  };
+}
+
+export function useLbState(args: InitializerArgs) {
+  return useReducer(lbStateReducer(args.defs), args, lbStateInit);
 }
