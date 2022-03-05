@@ -45,9 +45,7 @@ export default function LoadoutBuilderContainer({ account }: { account: DestinyA
   }
 
   // TODO: key off the URL params? Loadout ID?
-  return (
-    <LoadoutBuilder key={initialLoadout.id} account={account} initialLoadout={initialLoadout} />
-  );
+  return <LoadoutBuilder account={account} initialLoadout={initialLoadout} />;
 }
 
 /**

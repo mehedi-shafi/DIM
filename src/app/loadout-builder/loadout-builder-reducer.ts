@@ -399,3 +399,11 @@ function mergeLoadoutParameters(
 export function useLbState(args: InitializerArgs) {
   return useReducer(lbStateReducer(args.defs), args, lbStateInit);
 }
+
+function statOrderFromSavedPreferences(_arg0: ArmorStatHashes[]) {
+  return undefined;
+}
+
+function statOrderFromCustomStats(_arg0: number[]) {
+  return undefined;
+}

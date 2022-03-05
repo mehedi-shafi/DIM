@@ -1,13 +1,5 @@
-import {
-  defaultLoadoutParameters,
-  LoadoutParameters,
-  StatConstraint,
-} from '@destinyitemmanager/dim-api-types';
-import {
-  customStatsSelector,
-  savedLoadoutParametersSelector,
-  settingSelector,
-} from 'app/dim-api/selectors';
+import { defaultLoadoutParameters, LoadoutParameters } from '@destinyitemmanager/dim-api-types';
+import { savedLoadoutParametersSelector } from 'app/dim-api/selectors';
 import { t } from 'app/i18next-t';
 import { SocketOverrides } from 'app/inventory/store/override-sockets';
 import { Loadout } from 'app/loadout-drawer/loadout-types';
@@ -42,8 +34,6 @@ export function useInitialLoadout(): [loadout: Loadout, selectedStoreId?: string
   const navigate = useNavigate();
   const { pathname, state, search } = useLocation();
   const savedLoadoutParameters = useSelector(savedLoadoutParametersSelector);
-  const customStatsByClass = useSelector(customStatsSelector);
-  const loStatOrderByClass = useSelector(settingSelector('loStatOrderByClass'));
 
   // Try getting the loadout from state (if it was linked from elsewhere, like the loadout drawer)
   if (state) {
@@ -146,15 +136,6 @@ export function useInitialLoadout(): [loadout: Loadout, selectedStoreId?: string
   ) {
     classType =
       defs.InventoryItem.get(loadoutParameters.exoticArmorHash)?.classType ?? DestinyClass.Unknown;
-  }
-
-  // If there aren't ignored/ordered stats, fill them in from defaults
-  if (!loadoutParameters?.statConstraints) {
-    let statConstraints: StatConstraint[] = [];
-    const savedStats = loStatOrderByClass[classType];
-    if (savedStats) {
-      statConstraints = savedStats;
-    }
   }
 
   const constructedLoadout = newLoadout('', [], classType);

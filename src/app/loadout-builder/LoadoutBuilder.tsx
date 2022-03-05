@@ -1,11 +1,7 @@
 import { LoadoutParameters } from '@destinyitemmanager/dim-api-types';
 import { DestinyAccount } from 'app/accounts/destiny-account';
 import { createLoadoutShare } from 'app/dim-api/dim-api';
-import {
-  customStatsSelector,
-  savedLoadoutParametersSelector,
-  settingSelector,
-} from 'app/dim-api/selectors';
+import { customStatsSelector, settingSelector } from 'app/dim-api/selectors';
 import CharacterSelect from 'app/dim-ui/CharacterSelect';
 import CollapsibleTitle from 'app/dim-ui/CollapsibleTitle';
 import PageWithMenu from 'app/dim-ui/PageWithMenu';
@@ -13,10 +9,12 @@ import UserGuideLink from 'app/dim-ui/UserGuideLink';
 import { t } from 'app/i18next-t';
 import { PluggableInventoryItemDefinition } from 'app/inventory/item-types';
 import { isPluggableItem } from 'app/inventory/store/sockets';
+import { getItemsFromLoadoutItems } from 'app/loadout-drawer/loadout-item-conversion';
 import { convertDimLoadoutToApiLoadout } from 'app/loadout-drawer/loadout-type-converters';
 import { Loadout } from 'app/loadout-drawer/loadout-types';
 import { newLoadout, newLoadoutFromEquipped } from 'app/loadout-drawer/loadout-utils';
 import { loadoutsSelector } from 'app/loadout-drawer/selectors';
+import LoadoutView from 'app/loadout/LoadoutView';
 import { d2ManifestSelector, useD2Definitions } from 'app/manifest/selectors';
 import { showNotification } from 'app/notifications/notifications';
 import { armorStats } from 'app/search/d2-known-values';
@@ -37,7 +35,7 @@ import React, { useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
-import { allItemsSelector, sortedStoresSelector } from '../inventory/selectors';
+import { allItemsSelector, bucketsSelector, sortedStoresSelector } from '../inventory/selectors';
 import { isLoadoutBuilderItem } from '../loadout/item-utils';
 import ModPicker from '../loadout/ModPicker';
 import EnergyOptions from './filter/EnergyOptions';
@@ -51,14 +49,16 @@ import { useLbState } from './loadout-builder-reducer';
 import { buildLoadoutParams } from './loadout-params';
 import styles from './LoadoutBuilder.m.scss';
 import { useProcess } from './process/useProcess';
-import { generalSocketReusablePlugSetHash, ItemsByBucket, LOCKED_EXOTIC_ANY_EXOTIC } from './types';
-
-const statOrderSelector = (state: RootState) =>
-  savedLoadoutParametersSelector(state).statConstraints!.map((c) => c.statHash);
+import {
+  ArmorStatHashes,
+  generalSocketReusablePlugSetHash,
+  ItemsByBucket,
+  LOCKED_EXOTIC_ANY_EXOTIC,
+} from './types';
 
 /** A selector to pull out all half tier general mods so we can quick add them to sets. */
 const halfTierModsSelector = createSelector(
-  statOrderSelector,
+  (_state: RootState, statOrder: ArmorStatHashes[]) => statOrder,
   d2ManifestSelector,
   (statOrder, defs) => {
     const halfTierMods: PluggableInventoryItemDefinition[] = [];
@@ -149,7 +149,6 @@ export default function LoadoutBuilder({
   let loadouts = useSelector(loadoutsSelector);
   const searchFilter = useSelector(searchFilterSelector);
   const searchQuery = useSelector(querySelector);
-  const halfTierMods = useSelector(halfTierModsSelector);
   // These two help initialize stat order
   const customStatsByClass = useSelector(customStatsSelector);
   const loStatOrderByClass = useSelector(settingSelector('loStatOrderByClass'));
@@ -174,6 +173,7 @@ export default function LoadoutBuilder({
     lbDispatch,
   ] = useLbState({ defs, stores, initialLoadout, customStatsByClass, loStatOrderByClass });
 
+  const halfTierMods = useSelector((state) => halfTierModsSelector(state, statOrder));
   // TODO: If the loadout is for a class we don't have, short-circuit and show an error
   // TODO: explain better why we have no results
 
@@ -185,6 +185,18 @@ export default function LoadoutBuilder({
       (loadoutParameters.mods ?? []).map((m) => defs.InventoryItem.get(m)).filter(isPluggableItem),
     [defs, loadoutParameters.mods]
   );
+
+  // TODO: maybe a bit more... targeted?
+  const buckets = useSelector(bucketsSelector)!;
+  const allItems = useSelector(allItemsSelector);
+  const [loadoutItems] = getItemsFromLoadoutItems(
+    loadout.items,
+    defs,
+    selectedStoreId,
+    buckets,
+    allItems
+  );
+  const subclass = loadoutItems.find((item) => item.bucket.hash === BucketHashes.Subclass);
 
   // TODO: only save these settings when certain changes are made? Don't save for shared loadouts? Only save when a loadout is saved?
   // Save a subset of the loadout parameters to settings in order to remember them between sessions
@@ -442,6 +454,7 @@ export default function LoadoutBuilder({
             </p>
           </div>
         )}
+        <LoadoutView loadout={loadout} store={selectedStore} actionButtons={[]} />
         {filteredSets && filteredSets.length > 0 ? (
           <GeneratedSets
             sets={filteredSets}
