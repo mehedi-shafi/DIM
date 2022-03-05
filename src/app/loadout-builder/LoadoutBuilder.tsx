@@ -1,7 +1,11 @@
 import { LoadoutParameters } from '@destinyitemmanager/dim-api-types';
 import { DestinyAccount } from 'app/accounts/destiny-account';
 import { createLoadoutShare } from 'app/dim-api/dim-api';
-import { savedLoadoutParametersSelector } from 'app/dim-api/selectors';
+import {
+  customStatsSelector,
+  savedLoadoutParametersSelector,
+  settingSelector,
+} from 'app/dim-api/selectors';
 import CharacterSelect from 'app/dim-ui/CharacterSelect';
 import CollapsibleTitle from 'app/dim-ui/CollapsibleTitle';
 import PageWithMenu from 'app/dim-ui/PageWithMenu';
@@ -16,14 +20,13 @@ import { loadoutsSelector } from 'app/loadout-drawer/selectors';
 import { d2ManifestSelector, useD2Definitions } from 'app/manifest/selectors';
 import { showNotification } from 'app/notifications/notifications';
 import { armorStats } from 'app/search/d2-known-values';
-import { ItemFilter } from 'app/search/filter-types';
 import { searchFilterSelector } from 'app/search/search-filter';
 import { useSetSetting } from 'app/settings/hooks';
 import { AppIcon, refreshIcon } from 'app/shell/icons';
 import { querySelector, useIsPhonePortrait } from 'app/shell/selectors';
 import { RootState } from 'app/store/types';
 import { compareBy } from 'app/utils/comparators';
-import { emptyArray } from 'app/utils/empty';
+import { emptyArray, emptyObject } from 'app/utils/empty';
 import { isArmor2Mod } from 'app/utils/item-utils';
 import { copyString } from 'app/utils/util';
 import { DestinyClass } from 'bungie-api-ts/destiny2';
@@ -32,10 +35,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import _ from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
-import { allItemsSelector } from '../inventory/selectors';
-import { DimStore } from '../inventory/store-types';
+import { allItemsSelector, sortedStoresSelector } from '../inventory/selectors';
 import { isLoadoutBuilderItem } from '../loadout/item-utils';
 import ModPicker from '../loadout/ModPicker';
 import EnergyOptions from './filter/EnergyOptions';
@@ -50,28 +52,6 @@ import { buildLoadoutParams } from './loadout-params';
 import styles from './LoadoutBuilder.m.scss';
 import { useProcess } from './process/useProcess';
 import { generalSocketReusablePlugSetHash, ItemsByBucket, LOCKED_EXOTIC_ANY_EXOTIC } from './types';
-
-interface ProvidedProps {
-  stores: DimStore[];
-  initialClassType: DestinyClass | undefined;
-  notes: string | undefined;
-  preloadedLoadout: Loadout | undefined;
-  initialLoadoutParameters: LoadoutParameters;
-  account: DestinyAccount;
-}
-
-interface StoreProps {
-  items: Readonly<{
-    [classType: number]: ItemsByBucket;
-  }>;
-  loadouts: Loadout[];
-  searchFilter: ItemFilter;
-  searchQuery: string;
-  halfTierMods: PluggableInventoryItemDefinition[];
-  disabledDueToMaintenance: boolean;
-}
-
-type Props = ProvidedProps & StoreProps;
 
 const statOrderSelector = (state: RootState) =>
   savedLoadoutParametersSelector(state).statConstraints!.map((c) => c.statHash);
@@ -118,70 +98,71 @@ const halfTierModsSelector = createSelector(
   }
 );
 
-function mapStateToProps() {
-  /** Gets items for the loadout builder and creates a mapping of classType -> bucketHash -> item array. */
-  const itemsSelector = createSelector(
-    allItemsSelector,
-    (
-      allItems
-    ): Readonly<{
+/** Gets items for the loadout builder and creates a mapping of classType -> bucketHash -> item array. */
+const itemsSelector = createSelector(
+  allItemsSelector,
+  (
+    allItems
+  ): Readonly<{
+    [classType: number]: ItemsByBucket;
+  }> => {
+    const items: {
       [classType: number]: ItemsByBucket;
-    }> => {
-      const items: {
-        [classType: number]: ItemsByBucket;
-      } = {};
-      for (const item of allItems) {
-        if (!item || !isLoadoutBuilderItem(item)) {
-          continue;
-        }
-        const { classType, bucket } = item;
-        (items[classType] ??= {
-          [BucketHashes.Helmet]: [],
-          [BucketHashes.Gauntlets]: [],
-          [BucketHashes.ChestArmor]: [],
-          [BucketHashes.LegArmor]: [],
-          [BucketHashes.ClassArmor]: [],
-        })[bucket.hash].push(item);
+    } = {};
+    for (const item of allItems) {
+      if (!item || !isLoadoutBuilderItem(item)) {
+        continue;
       }
-      return items;
+      const { classType, bucket } = item;
+      (items[classType] ??= {
+        [BucketHashes.Helmet]: [],
+        [BucketHashes.Gauntlets]: [],
+        [BucketHashes.ChestArmor]: [],
+        [BucketHashes.LegArmor]: [],
+        [BucketHashes.ClassArmor]: [],
+      })[bucket.hash].push(item);
     }
-  );
-
-  const disabledDueToMaintenanceSelector = createSelector(allItemsSelector, (items) =>
-    items.every((item) => item.missingSockets)
-  );
-
-  return (state: RootState): StoreProps => ({
-    items: itemsSelector(state),
-    loadouts: loadoutsSelector(state),
-    searchFilter: searchFilterSelector(state),
-    searchQuery: querySelector(state),
-    halfTierMods: halfTierModsSelector(state),
-    disabledDueToMaintenance: disabledDueToMaintenanceSelector(state),
-  });
-}
+    return items;
+  }
+);
 
 /**
- * The Loadout Optimizer screen
+ * The Loadout Optimizer provides an interface for editing the armor of a
+ * loadout to pick optimal armor sets with mods included.
+ *
+ * This is the actual Loadout Optimizer component. It is only ever rendered
+ * after stores/defs have been loaded, and is *always* provided an initial
+ * loadout to use for initializing settings and as a target to save into. If you
+ * want to edit another loadout, use a key prop to render a different instance
+ * of this component.
  */
-function LoadoutBuilder({
+export default function LoadoutBuilder({
   account,
-  stores,
-  items,
-  loadouts,
-  searchFilter,
-  preloadedLoadout,
-  initialClassType,
-  notes,
-  searchQuery,
-  halfTierMods,
-  initialLoadoutParameters,
-  disabledDueToMaintenance,
-}: Props) {
+  initialLoadout,
+}: {
+  initialLoadout: Loadout;
+  account: DestinyAccount;
+}) {
   const defs = useD2Definitions()!;
+  const stores = useSelector(sortedStoresSelector);
+  const items = useSelector(itemsSelector);
+  let loadouts = useSelector(loadoutsSelector);
+  const searchFilter = useSelector(searchFilterSelector);
+  const searchQuery = useSelector(querySelector);
+  const halfTierMods = useSelector(halfTierModsSelector);
+  // These two help initialize stat order
+  const customStatsByClass = useSelector(customStatsSelector);
+  const loStatOrderByClass = useSelector(settingSelector('loStatOrderByClass'));
+  const isPhonePortrait = useIsPhonePortrait();
+
+  // TODO: notes editor, loadout editor area
+  const notes = initialLoadout.notes;
+
+  // TODO: filter available classes if the classType is specified in the loadout?
+  // TODO: classType state - or make it controlled??
   const [
     {
-      loadoutParameters,
+      loadout,
       statOrder,
       pinnedItems,
       excludedItems,
@@ -192,9 +173,8 @@ function LoadoutBuilder({
       compareSet,
     },
     lbDispatch,
-  ] = useLbState(stores, preloadedLoadout, initialClassType, initialLoadoutParameters, defs);
-  const isPhonePortrait = useIsPhonePortrait();
-
+  ] = useLbState({ defs, stores, initialLoadout, customStatsByClass, loStatOrderByClass });
+  const loadoutParameters: LoadoutParameters = loadout.parameters ?? emptyObject();
   const lockedExoticHash = loadoutParameters.exoticArmorHash;
 
   const lockedMods = useMemo(
@@ -203,6 +183,7 @@ function LoadoutBuilder({
     [defs, loadoutParameters.mods]
   );
 
+  // TODO: only save these settings when certain changes are made? Don't save for shared loadouts? Only save when a loadout is saved?
   // Save a subset of the loadout parameters to settings in order to remember them between sessions
   const setSetting = useSetSetting();
   useEffect(() => {
@@ -288,7 +269,6 @@ function LoadoutBuilder({
     statOrder,
     statFilters,
     anyExotic: lockedExoticHash === LOCKED_EXOTIC_ANY_EXOTIC,
-    disabledDueToMaintenance,
   });
 
   // A representation of the current loadout optimizer parameters that can be saved with generated loadouts
@@ -331,10 +311,6 @@ function LoadoutBuilder({
   // I don't think this can actually happen?
   if (!selectedStore) {
     return null;
-  }
-
-  if (disabledDueToMaintenance) {
-    return <div className={styles.disabled}>{t('LoadoutBuilder.DisabledDueToMaintenance')}</div>;
   }
 
   const menuContent = (
@@ -463,7 +439,7 @@ function LoadoutBuilder({
             </p>
           </div>
         )}
-        {filteredSets && (
+        {filteredSets && filteredSets.length > 0 ? (
           <GeneratedSets
             sets={filteredSets}
             subclass={subclass}
@@ -480,6 +456,17 @@ function LoadoutBuilder({
             lockArmorEnergyType={loadoutParameters.lockArmorEnergyType}
             notes={notes}
           />
+        ) : (
+          <div className={styles.guide}>
+            <h3>{t('LoadoutBuilder.NoBuildsFoundWithReasons')}</h3>
+            <ol>
+              <li>{t('LoadoutBuilder.TODO')}</li>
+              <li>{t('LoadoutBuilder.TODO')}</li>
+              <li>{t('LoadoutBuilder.TODO')}</li>
+              <li>{t('LoadoutBuilder.TODO')}</li>
+            </ol>
+            <p>{t('LoadoutBuilder.TODO')}</p>
+          </div>
         )}
         {modPicker.open &&
           ReactDOM.createPortal(
@@ -504,7 +491,7 @@ function LoadoutBuilder({
               set={compareSet}
               selectedStore={selectedStore}
               loadouts={loadouts}
-              initialLoadoutId={preloadedLoadout?.id}
+              initialLoadoutId={initialLoadout?.id}
               subclass={subclass}
               classType={classType}
               params={params}
@@ -517,5 +504,3 @@ function LoadoutBuilder({
     </PageWithMenu>
   );
 }
-
-export default connect<StoreProps>(mapStateToProps)(LoadoutBuilder);

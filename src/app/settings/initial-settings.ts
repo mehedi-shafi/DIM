@@ -12,12 +12,12 @@ export const enum LoadoutSort {
  */
 export interface Settings extends DimApiSettings {
   /** Display perks as a list instead of a grid. */
-  perkList: boolean;
-  loadoutSort: LoadoutSort;
-  itemFeedHideTagged: boolean;
-  itemFeedExpanded: boolean;
+  readonly perkList: boolean;
+  readonly loadoutSort: LoadoutSort;
+  readonly itemFeedHideTagged: boolean;
+  readonly itemFeedExpanded: boolean;
   /** Pull from postmaster is an irreversible action and some people don't want to accidentally hit it. */
-  hidePullFromPostmaster: boolean;
+  readonly hidePullFromPostmaster: boolean;
   readonly loStatOrderByClass: {
     [key: number]: ArmorStatHashes[];
   };

@@ -59,7 +59,6 @@ export function useProcess({
   statOrder,
   statFilters,
   anyExotic,
-  disabledDueToMaintenance,
 }: {
   defs: D2ManifestDefinitions;
   selectedStore: DimStore;
@@ -71,7 +70,6 @@ export function useProcess({
   statOrder: number[];
   statFilters: StatFilters;
   anyExotic: boolean;
-  disabledDueToMaintenance: boolean;
 }) {
   const [remainingTime, setRemainingTime] = useState(0);
   const [{ result, processing }, setState] = useState<ProcessState>({
@@ -94,10 +92,6 @@ export function useProcess({
   );
 
   useEffect(() => {
-    if (disabledDueToMaintenance) {
-      return;
-    }
-
     const processStart = performance.now();
 
     // Stop any previous worker
@@ -221,7 +215,6 @@ export function useProcess({
     statFilters,
     statOrder,
     anyExotic,
-    disabledDueToMaintenance,
     subclass?.socketOverrides,
     assumeArmorMasterwork,
     lockArmorEnergyType,

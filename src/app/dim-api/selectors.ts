@@ -25,7 +25,15 @@ export const settingSelector =
  */
 export const savedLoadoutParametersSelector = createSelector(
   (state: RootState) => settingsSelector(state).loParameters,
-  (loParams) => ({ ...defaultLoadoutParameters, ...loParams })
+  (loParams) => {
+    const params = { ...defaultLoadoutParameters, ...loParams };
+    delete params.query; // shouldn't be saved
+    delete params.mods; // shouldn't be saved
+    delete params.clearMods; // shouldn't be saved
+    delete params.exoticArmorHash; // shouldn't be saved
+    delete params.statConstraints; // these are handled by loStatOrderByClass
+    return params;
+  }
 );
 
 export const languageSelector = (state: RootState) => settingsSelector(state).language;

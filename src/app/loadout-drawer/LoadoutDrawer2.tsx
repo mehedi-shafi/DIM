@@ -88,7 +88,7 @@ export default function LoadoutDrawer2() {
     const loadoutJSON = searchParams.get('loadout');
     if (loadoutJSON) {
       try {
-        const parsedLoadout = convertDimApiLoadoutToLoadout(JSON.parse(loadoutJSON));
+        const parsedLoadout = parseLoadoutFromURLParam(loadoutJSON);
         if (parsedLoadout) {
           const storeId =
             parsedLoadout.classType === DestinyClass.Unknown
@@ -99,20 +99,6 @@ export default function LoadoutDrawer2() {
             warnMissingClass(parsedLoadout.classType, defs);
             return;
           }
-
-          parsedLoadout.id = uuidv4();
-          parsedLoadout.items = parsedLoadout.items.map((item) => ({
-            ...item,
-            id:
-              item.id === '0'
-                ? // We don't save consumables in D2 loadouts, but we may omit ids in shared loadouts
-                  // (because they'll never match someone else's inventory). So
-                  // instead, pick a random ID. It's possible these will
-                  // conflict with something already in the user's inventory but
-                  // it's not likely.
-                  Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString()
-                : item.id,
-          }));
 
           stateDispatch({
             type: 'editLoadout',
@@ -476,4 +462,29 @@ async function pickLoadoutSubclass(
     add({ item, socketOverrides });
   }
   onShowItemPicker(false);
+}
+
+export function parseLoadoutFromURLParam(loadoutJSON: string | undefined) {
+  if (loadoutJSON) {
+    const parsedLoadout = convertDimApiLoadoutToLoadout(JSON.parse(loadoutJSON));
+    if (parsedLoadout) {
+      parsedLoadout.id = uuidv4();
+      parsedLoadout.items = parsedLoadout.items.map((item) => ({
+        ...item,
+        id:
+          item.id === '0'
+            ? // We don't save consumables in D2 loadouts, but we may omit ids in shared loadouts
+              // (because they'll never match someone else's inventory). So
+              // instead, pick a random ID. It's possible these will
+              // conflict with something already in the user's inventory but
+              // it's not likely.
+              Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString()
+            : item.id,
+      }));
+
+      return parsedLoadout;
+    }
+  }
+
+  return undefined;
 }
