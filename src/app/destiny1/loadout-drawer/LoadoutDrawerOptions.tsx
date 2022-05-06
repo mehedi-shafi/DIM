@@ -1,13 +1,13 @@
 import { t } from 'app/i18next-t';
 import { storesSelector } from 'app/inventory/selectors';
+import { Loadout } from 'app/loadout/loadout-types';
 import {
   LoadoutUpdateFunction,
   setClassType,
   setClearSpace,
   setName,
   setNotes,
-} from 'app/loadout-drawer/loadout-drawer-reducer';
-import { Loadout } from 'app/loadout/loadout-types';
+} from 'app/loadout/loadout-updates';
 import { DestinyClass } from 'bungie-api-ts/destiny2';
 import clsx from 'clsx';
 import _ from 'lodash';

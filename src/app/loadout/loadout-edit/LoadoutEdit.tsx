@@ -5,6 +5,8 @@ import { D2BucketCategory, InventoryBucket } from 'app/inventory/inventory-bucke
 import { DimItem, PluggableInventoryItemDefinition } from 'app/inventory/item-types';
 import { allItemsSelector, bucketsSelector } from 'app/inventory/selectors';
 import { DimStore } from 'app/inventory/store-types';
+import { Loadout, ResolvedLoadoutItem } from 'app/loadout/loadout-types';
+import LoadoutMods from 'app/loadout/loadout-ui/LoadoutMods';
 import {
   applySocketOverrides,
   changeClearMods,
@@ -21,9 +23,7 @@ import {
   syncModsFromEquipped,
   updateMods,
   updateModsByBucket,
-} from 'app/loadout-drawer/loadout-drawer-reducer';
-import { Loadout, ResolvedLoadoutItem } from 'app/loadout/loadout-types';
-import LoadoutMods from 'app/loadout/loadout-ui/LoadoutMods';
+} from 'app/loadout/loadout-updates';
 import { getModsFromLoadout, getUnequippedItemsForLoadout } from 'app/loadout/loadout-utils';
 import { getItemsAndSubclassFromLoadout, loadoutPower } from 'app/loadout/LoadoutView';
 import { useD2Definitions } from 'app/manifest/selectors';
@@ -34,12 +34,12 @@ import React, { useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useSelector } from 'react-redux';
 import { hasVisibleLoadoutParameters } from '../loadout-ui/LoadoutParametersDisplay';
-import SubclassPlugDrawer from '../SubclassPlugDrawer';
 import styles from './LoadoutEdit.m.scss';
 import LoadoutEditBucket, { ArmorExtras } from './LoadoutEditBucket';
 import LoadoutEditBucketDropTarget from './LoadoutEditBucketDropTarget';
 import LoadoutEditSection from './LoadoutEditSection';
 import LoadoutEditSubclass from './LoadoutEditSubclass';
+import SubclassPlugDrawer from './SubclassPlugDrawer';
 
 export default function LoadoutEdit({
   loadout,

@@ -3,10 +3,10 @@ import { DimItem, PluggableInventoryItemDefinition } from 'app/inventory/item-ty
 import { DimStore } from 'app/inventory/store-types';
 import { hideItemPicker, showItemPicker } from 'app/item-picker/item-picker';
 import { isLoadoutBuilderItem, pickSubclass } from 'app/loadout/item-utils';
+import SubclassPlugDrawer from 'app/loadout/loadout-edit/SubclassPlugDrawer';
 import { ResolvedLoadoutItem } from 'app/loadout/loadout-types';
 import PlugDef from 'app/loadout/loadout-ui/PlugDef';
 import { createGetModRenderKey } from 'app/loadout/mod-utils';
-import SubclassPlugDrawer from 'app/loadout/SubclassPlugDrawer';
 import { useD2Definitions } from 'app/manifest/selectors';
 import { ItemFilter } from 'app/search/filter-types';
 import { AppIcon, faTimesCircle, pinIcon } from 'app/shell/icons';

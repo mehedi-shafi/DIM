@@ -6,18 +6,13 @@ import { DimItem } from 'app/inventory/item-types';
 import ItemIcon from 'app/inventory/ItemIcon';
 import { allItemsSelector, bucketsSelector } from 'app/inventory/selectors';
 import { showItemPicker } from 'app/item-picker/item-picker';
-import {
-  addItem,
-  equipItem,
-  removeItem,
-  setNotes,
-} from 'app/loadout-drawer/loadout-drawer-reducer';
 import LoadoutDrawerDropTarget from 'app/loadout-drawer/LoadoutDrawerDropTarget';
 import LoadoutDrawerFooter from 'app/loadout-drawer/LoadoutDrawerFooter';
 import { deleteLoadout, updateLoadout } from 'app/loadout/actions';
 import { addItem$ } from 'app/loadout/loadout-events';
 import { getItemsFromLoadoutItems } from 'app/loadout/loadout-item-conversion';
 import { Loadout, ResolvedLoadoutItem } from 'app/loadout/loadout-types';
+import { addItem, equipItem, removeItem, setNotes } from 'app/loadout/loadout-updates';
 import { useD1Definitions } from 'app/manifest/selectors';
 import { useThunkDispatch } from 'app/store/thunk-dispatch';
 import { useEventBusListener } from 'app/utils/hooks';

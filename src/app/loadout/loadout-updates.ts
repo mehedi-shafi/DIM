@@ -23,7 +23,7 @@ import { DestinyClass, TierType } from 'bungie-api-ts/destiny2';
 import { BucketHashes, SocketCategoryHashes } from 'data/d2/generated-enums';
 import produce from 'immer';
 import _ from 'lodash';
-import { Loadout, LoadoutItem, ResolvedLoadoutItem } from '../loadout/loadout-types';
+import { Loadout, LoadoutItem, ResolvedLoadoutItem } from './loadout-types';
 
 /*
  * This module contains functions for mutating loadouts. Each exported function

@@ -39,7 +39,7 @@ import {
   setClearSpace,
   setName,
   setNotes,
-} from './loadout-drawer-reducer';
+} from '../loadout/loadout-updates';
 import styles from './LoadoutDrawer2.m.scss';
 import LoadoutDrawerDropTarget from './LoadoutDrawerDropTarget';
 import LoadoutDrawerFooter from './LoadoutDrawerFooter';

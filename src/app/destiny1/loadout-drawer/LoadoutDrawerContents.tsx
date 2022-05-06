@@ -5,12 +5,12 @@ import { DimItem } from 'app/inventory/item-types';
 import { bucketsSelector, storesSelector } from 'app/inventory/selectors';
 import { getStore } from 'app/inventory/stores-helpers';
 import { showItemPicker } from 'app/item-picker/item-picker';
+import { Loadout, ResolvedLoadoutItem } from 'app/loadout/loadout-types';
 import {
   fillLoadoutFromEquipped,
   fillLoadoutFromUnequipped,
   LoadoutUpdateFunction,
-} from 'app/loadout-drawer/loadout-drawer-reducer';
-import { Loadout, ResolvedLoadoutItem } from 'app/loadout/loadout-types';
+} from 'app/loadout/loadout-updates';
 import { findSameLoadoutItemIndex, fromEquippedTypes } from 'app/loadout/loadout-utils';
 import { useD1Definitions } from 'app/manifest/selectors';
 import { D1BucketHashes } from 'app/search/d1-known-values';
