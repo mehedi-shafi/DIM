@@ -2,7 +2,7 @@ import { DimItem } from 'app/inventory/item-types';
 import { allItemsSelector, bucketsSelector, sortedStoresSelector } from 'app/inventory/selectors';
 import { getCurrentStore, getStore } from 'app/inventory/stores-helpers';
 import { LockableBucketHashes } from 'app/loadout-builder/types';
-import { getItemsFromLoadoutItems } from 'app/loadout-drawer/loadout-item-conversion';
+import { getItemsFromLoadoutItems } from 'app/loadout/loadout-item-conversion';
 import { Loadout, ResolvedLoadoutItem } from 'app/loadout/loadout-types';
 import { manifestSelector } from 'app/manifest/selectors';
 import { RootState } from 'app/store/types';

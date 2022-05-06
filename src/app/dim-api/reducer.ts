@@ -10,7 +10,7 @@ import {
   TagValue,
 } from '@destinyitemmanager/dim-api-types';
 import { DestinyAccount } from 'app/accounts/destiny-account';
-import { convertDimLoadoutToApiLoadout } from 'app/loadout-drawer/loadout-type-converters';
+import { convertDimLoadoutToApiLoadout } from 'app/loadout/loadout-type-converters';
 import { recentSearchComparator } from 'app/search/autocomplete';
 import { searchConfigSelector } from 'app/search/search-config';
 import { parseAndValidateQuery } from 'app/search/search-utils';
@@ -24,7 +24,7 @@ import produce, { Draft } from 'immer';
 import _ from 'lodash';
 import { ActionType, getType } from 'typesafe-actions';
 import * as inventoryActions from '../inventory/actions';
-import * as loadoutActions from '../loadout-drawer/actions';
+import * as loadoutActions from '../loadout/actions';
 import { Loadout as DimLoadout } from '../loadout/loadout-types';
 import * as settingsActions from '../settings/actions';
 import { initialSettingsState, Settings } from '../settings/initial-settings';

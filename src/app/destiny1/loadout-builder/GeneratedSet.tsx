@@ -1,6 +1,6 @@
 import { t } from 'app/i18next-t';
-import { applyLoadout } from 'app/loadout-drawer/loadout-apply';
-import { editLoadout } from 'app/loadout-drawer/loadout-events';
+import { applyLoadout } from 'app/loadout/loadout-apply';
+import { editLoadout } from 'app/loadout/loadout-events';
 import { Loadout } from 'app/loadout/loadout-types';
 import D1CharacterStats from 'app/store-stats/D1CharacterStats';
 import { useThunkDispatch } from 'app/store/thunk-dispatch';
@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import { D1Item } from '../../inventory/item-types';
 import { DimStore } from '../../inventory/store-types';
 import ItemTalentGrid from '../../item-popup/ItemTalentGrid';
-import { convertToLoadoutItem, newLoadout } from '../../loadout-drawer/loadout-utils';
+import { convertToLoadoutItem, newLoadout } from '../../loadout/loadout-utils';
 import { AppIcon, faMinusSquare, faPlusSquare } from '../../shell/icons';
 import './loadout-builder.scss';
 import LoadoutBuilderItem from './LoadoutBuilderItem';

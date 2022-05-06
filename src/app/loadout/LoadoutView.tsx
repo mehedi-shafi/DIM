@@ -6,9 +6,9 @@ import { D2BucketCategory, InventoryBuckets } from 'app/inventory/inventory-buck
 import { DimItem } from 'app/inventory/item-types';
 import { allItemsSelector, bucketsSelector } from 'app/inventory/selectors';
 import { DimStore } from 'app/inventory/store-types';
-import { getItemsFromLoadoutItems } from 'app/loadout-drawer/loadout-item-conversion';
-import { getLight, getModsFromLoadout } from 'app/loadout-drawer/loadout-utils';
+import { getItemsFromLoadoutItems } from 'app/loadout/loadout-item-conversion';
 import { Loadout, LoadoutItem, ResolvedLoadoutItem } from 'app/loadout/loadout-types';
+import { getLight, getModsFromLoadout } from 'app/loadout/loadout-utils';
 import { useD2Definitions } from 'app/manifest/selectors';
 import { useIsPhonePortrait } from 'app/shell/selectors';
 import { emptyObject } from 'app/utils/empty';

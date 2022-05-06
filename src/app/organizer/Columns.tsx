@@ -23,7 +23,7 @@ import { ItemStatValue } from 'app/item-popup/ItemStat';
 import NotesArea from 'app/item-popup/NotesArea';
 import { DimPlugTooltip } from 'app/item-popup/PlugTooltip';
 import RecoilStat, { recoilValue } from 'app/item-popup/RecoilStat';
-import { LoadoutsByItem } from 'app/loadout-drawer/selectors';
+import { LoadoutsByItem } from 'app/loadout/selectors';
 import { CUSTOM_TOTAL_STAT_HASH } from 'app/search/d2-known-values';
 import { quoteFilterString } from 'app/search/query-parser';
 import { statHashByName } from 'app/search/search-filter-values';

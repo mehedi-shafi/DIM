@@ -21,9 +21,9 @@ import {
   applySocketOverrides,
   useSocketOverridesForItems,
 } from 'app/inventory/store/override-sockets';
-import { applyLoadout } from 'app/loadout-drawer/loadout-apply';
-import { convertToLoadoutItem, newLoadout } from 'app/loadout-drawer/loadout-utils';
-import { LoadoutsByItem, loadoutsByItemSelector } from 'app/loadout-drawer/selectors';
+import { applyLoadout } from 'app/loadout/loadout-apply';
+import { convertToLoadoutItem, newLoadout } from 'app/loadout/loadout-utils';
+import { LoadoutsByItem, loadoutsByItemSelector } from 'app/loadout/selectors';
 import { useD2Definitions } from 'app/manifest/selectors';
 import { searchFilterSelector } from 'app/search/search-filter';
 import { setSettingAction } from 'app/settings/actions';

@@ -2,6 +2,7 @@ import { ConfirmButton } from 'app/dim-ui/ConfirmButton';
 import UserGuideLink from 'app/dim-ui/UserGuideLink';
 import { t } from 'app/i18next-t';
 import { getClass } from 'app/inventory/store/character-utils';
+import { loadoutsSelector } from 'app/loadout/selectors';
 import { AppIcon, deleteIcon } from 'app/shell/icons';
 import { RootState } from 'app/store/types';
 import { currySelector } from 'app/utils/redux-utils';
@@ -12,7 +13,6 @@ import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import { Loadout } from '../loadout/loadout-types';
 import styles from './LoadoutDrawerFooter.m.scss';
-import { loadoutsSelector } from './selectors';
 
 /**
  * Find a loadout with the same name that could overlap with this one

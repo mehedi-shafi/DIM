@@ -7,6 +7,14 @@ import { t } from 'app/i18next-t';
 import { DimItem } from 'app/inventory/item-types';
 import { DimStore } from 'app/inventory/store-types';
 import { SocketOverrides } from 'app/inventory/store/override-sockets';
+import {
+  createSocketOverridesFromEquipped,
+  extractArmorModHashes,
+  findSameLoadoutItemIndex,
+  fromEquippedTypes,
+  getUnequippedItemsForLoadout,
+  singularBucketHashes,
+} from 'app/loadout/loadout-utils';
 import { showNotification } from 'app/notifications/notifications';
 import { itemCanBeInLoadout } from 'app/utils/item-utils';
 import { errorLog } from 'app/utils/log';
@@ -16,14 +24,6 @@ import { BucketHashes, SocketCategoryHashes } from 'data/d2/generated-enums';
 import produce from 'immer';
 import _ from 'lodash';
 import { Loadout, LoadoutItem, ResolvedLoadoutItem } from '../loadout/loadout-types';
-import {
-  createSocketOverridesFromEquipped,
-  extractArmorModHashes,
-  findSameLoadoutItemIndex,
-  fromEquippedTypes,
-  getUnequippedItemsForLoadout,
-  singularBucketHashes,
-} from './loadout-utils';
 
 /*
  * This module contains functions for mutating loadouts. Each exported function

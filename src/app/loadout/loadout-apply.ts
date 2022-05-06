@@ -62,8 +62,8 @@ import { DestinyClass, PlatformErrorCodes } from 'bungie-api-ts/destiny2';
 import { BucketHashes, SocketCategoryHashes } from 'data/d2/generated-enums';
 import produce from 'immer';
 import _ from 'lodash';
+import { savePreviousLoadout } from '../loadout/actions';
 import { Assignment, Loadout, LoadoutItem } from '../loadout/loadout-types';
-import { savePreviousLoadout } from './actions';
 import {
   anyActionFailed,
   LoadoutApplyPhase,

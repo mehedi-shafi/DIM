@@ -1,7 +1,7 @@
 import { t } from 'app/i18next-t';
 import { DimItem } from 'app/inventory/item-types';
 import { bucketsSelector, storesSelector } from 'app/inventory/selectors';
-import { singularBucketHashes } from 'app/loadout-drawer/loadout-utils';
+import { singularBucketHashes } from 'app/loadout/loadout-utils';
 import { itemCanBeInLoadout } from 'app/utils/item-utils';
 import { DestinyClass } from 'bungie-api-ts/destiny2';
 import clsx from 'clsx';

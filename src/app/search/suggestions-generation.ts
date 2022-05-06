@@ -9,7 +9,7 @@ import {
   allNotesHashtagsSelector,
   itemInfosSelector,
 } from '../inventory/selectors';
-import { loadoutsSelector } from '../loadout-drawer/selectors';
+import { loadoutsSelector } from '../loadout/selectors';
 import { canonicalFilterFormats, FilterDefinition, SuggestionsContext } from './filter-types';
 
 //

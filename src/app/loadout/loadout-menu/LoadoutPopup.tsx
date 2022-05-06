@@ -8,18 +8,18 @@ import { InventoryBuckets } from 'app/inventory/inventory-buckets';
 import { DimItem } from 'app/inventory/item-types';
 import { allItemsSelector, bucketsSelector, hasClassifiedSelector } from 'app/inventory/selectors';
 import { DimStore } from 'app/inventory/store-types';
+import { makeRoomForPostmaster, totalPostmasterItems } from 'app/loadout-drawer/postmaster';
 import {
   gatherEngramsLoadout,
   itemLevelingLoadout,
   itemMoveLoadout,
   randomLoadout,
-} from 'app/loadout-drawer/auto-loadouts';
-import { applyLoadout } from 'app/loadout-drawer/loadout-apply';
-import { editLoadout } from 'app/loadout-drawer/loadout-events';
-import { isMissingItems, newLoadout } from 'app/loadout-drawer/loadout-utils';
-import { makeRoomForPostmaster, totalPostmasterItems } from 'app/loadout-drawer/postmaster';
-import { loadoutsSelector, previousLoadoutSelector } from 'app/loadout-drawer/selectors';
+} from 'app/loadout/auto-loadouts';
+import { applyLoadout } from 'app/loadout/loadout-apply';
+import { editLoadout } from 'app/loadout/loadout-events';
 import { Loadout } from 'app/loadout/loadout-types';
+import { isMissingItems, newLoadout } from 'app/loadout/loadout-utils';
+import { loadoutsSelector, previousLoadoutSelector } from 'app/loadout/selectors';
 import { useDefinitions } from 'app/manifest/selectors';
 import { showMaterialCount } from 'app/material-counts/MaterialCountsWrappers';
 import { showNotification } from 'app/notifications/notifications';

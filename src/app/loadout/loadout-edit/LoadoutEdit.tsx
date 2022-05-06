@@ -22,9 +22,9 @@ import {
   updateMods,
   updateModsByBucket,
 } from 'app/loadout-drawer/loadout-drawer-reducer';
-import { getModsFromLoadout, getUnequippedItemsForLoadout } from 'app/loadout-drawer/loadout-utils';
 import { Loadout, ResolvedLoadoutItem } from 'app/loadout/loadout-types';
 import LoadoutMods from 'app/loadout/loadout-ui/LoadoutMods';
+import { getModsFromLoadout, getUnequippedItemsForLoadout } from 'app/loadout/loadout-utils';
 import { getItemsAndSubclassFromLoadout, loadoutPower } from 'app/loadout/LoadoutView';
 import { useD2Definitions } from 'app/manifest/selectors';
 import { emptyObject } from 'app/utils/empty';

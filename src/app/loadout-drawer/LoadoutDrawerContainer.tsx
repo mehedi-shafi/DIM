@@ -4,6 +4,10 @@ import { DimItem } from 'app/inventory/item-types';
 import { storesSelector } from 'app/inventory/selectors';
 import { getCurrentStore } from 'app/inventory/stores-helpers';
 import { warnMissingClass } from 'app/loadout-builder/loadout-builder-reducer';
+import { addItem$, editLoadout$ } from 'app/loadout/loadout-events';
+import { generateMissingLoadoutItemId } from 'app/loadout/loadout-item-conversion';
+import { convertDimApiLoadoutToLoadout } from 'app/loadout/loadout-type-converters';
+import { newLoadout, pickBackingStore } from 'app/loadout/loadout-utils';
 import { useD2Definitions } from 'app/manifest/selectors';
 import { showNotification } from 'app/notifications/notifications';
 import { useEventBusListener } from 'app/utils/hooks';
@@ -13,10 +17,6 @@ import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
 import { Loadout } from '../loadout/loadout-types';
-import { addItem$, editLoadout$ } from './loadout-events';
-import { generateMissingLoadoutItemId } from './loadout-item-conversion';
-import { convertDimApiLoadoutToLoadout } from './loadout-type-converters';
-import { newLoadout, pickBackingStore } from './loadout-utils';
 
 const LoadoutDrawer = React.lazy(
   () => import(/* webpackChunkName: "loadout-drawer" */ './LoadoutDrawer2')

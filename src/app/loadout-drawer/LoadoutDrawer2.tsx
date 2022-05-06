@@ -7,6 +7,11 @@ import { SocketOverrides } from 'app/inventory/store/override-sockets';
 import { getStore } from 'app/inventory/stores-helpers';
 import { showItemPicker } from 'app/item-picker/item-picker';
 import { pickSubclass } from 'app/loadout/item-utils';
+import { addItem$ } from 'app/loadout/loadout-events';
+import {
+  createSubclassDefaultSocketOverrides,
+  findSameLoadoutItemIndex,
+} from 'app/loadout/loadout-utils';
 import { useDefinitions } from 'app/manifest/selectors';
 import { addIcon, AppIcon } from 'app/shell/icons';
 import { useThunkDispatch } from 'app/store/thunk-dispatch';
@@ -21,9 +26,9 @@ import { v4 as uuidv4 } from 'uuid';
 import Sheet from '../dim-ui/Sheet';
 import { DimItem } from '../inventory/item-types';
 import { storesSelector } from '../inventory/selectors';
+import { deleteLoadout, updateLoadout } from '../loadout/actions';
 import LoadoutEdit from '../loadout/loadout-edit/LoadoutEdit';
 import { Loadout, ResolvedLoadoutItem } from '../loadout/loadout-types';
-import { deleteLoadout, updateLoadout } from './actions';
 import {
   addItem,
   fillLoadoutFromEquipped,
@@ -35,8 +40,6 @@ import {
   setName,
   setNotes,
 } from './loadout-drawer-reducer';
-import { addItem$ } from './loadout-events';
-import { createSubclassDefaultSocketOverrides, findSameLoadoutItemIndex } from './loadout-utils';
 import styles from './LoadoutDrawer2.m.scss';
 import LoadoutDrawerDropTarget from './LoadoutDrawerDropTarget';
 import LoadoutDrawerFooter from './LoadoutDrawerFooter';
