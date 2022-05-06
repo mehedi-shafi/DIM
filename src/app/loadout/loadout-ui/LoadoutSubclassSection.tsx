@@ -4,7 +4,7 @@ import ConnectedInventoryItem from 'app/inventory/ConnectedInventoryItem';
 import { PluggableInventoryItemDefinition } from 'app/inventory/item-types';
 import ItemPopupTrigger from 'app/inventory/ItemPopupTrigger';
 import { isPluggableItem } from 'app/inventory/store/sockets';
-import { ResolvedLoadoutItem } from 'app/loadout-drawer/loadout-types';
+import { ResolvedLoadoutItem } from 'app/loadout/loadout-types';
 import { AppIcon, powerActionIcon } from 'app/shell/icons';
 import { getDefaultAbilityChoiceHash, getSocketsByIndexes } from 'app/utils/socket-utils';
 import clsx from 'clsx';

@@ -12,10 +12,10 @@ import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
+import { Loadout } from '../loadout/loadout-types';
 import { addItem$, editLoadout$ } from './loadout-events';
 import { generateMissingLoadoutItemId } from './loadout-item-conversion';
 import { convertDimApiLoadoutToLoadout } from './loadout-type-converters';
-import { Loadout } from './loadout-types';
 import { newLoadout, pickBackingStore } from './loadout-utils';
 
 const LoadoutDrawer = React.lazy(

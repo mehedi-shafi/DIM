@@ -22,6 +22,7 @@ import Sheet from '../dim-ui/Sheet';
 import { DimItem } from '../inventory/item-types';
 import { storesSelector } from '../inventory/selectors';
 import LoadoutEdit from '../loadout/loadout-edit/LoadoutEdit';
+import { Loadout, ResolvedLoadoutItem } from '../loadout/loadout-types';
 import { deleteLoadout, updateLoadout } from './actions';
 import {
   addItem,
@@ -35,7 +36,6 @@ import {
   setNotes,
 } from './loadout-drawer-reducer';
 import { addItem$ } from './loadout-events';
-import { Loadout, ResolvedLoadoutItem } from './loadout-types';
 import { createSubclassDefaultSocketOverrides, findSameLoadoutItemIndex } from './loadout-utils';
 import styles from './LoadoutDrawer2.m.scss';
 import LoadoutDrawerDropTarget from './LoadoutDrawerDropTarget';

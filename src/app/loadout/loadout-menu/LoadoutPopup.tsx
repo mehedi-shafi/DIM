@@ -16,10 +16,10 @@ import {
 } from 'app/loadout-drawer/auto-loadouts';
 import { applyLoadout } from 'app/loadout-drawer/loadout-apply';
 import { editLoadout } from 'app/loadout-drawer/loadout-events';
-import { Loadout } from 'app/loadout-drawer/loadout-types';
 import { isMissingItems, newLoadout } from 'app/loadout-drawer/loadout-utils';
 import { makeRoomForPostmaster, totalPostmasterItems } from 'app/loadout-drawer/postmaster';
 import { loadoutsSelector, previousLoadoutSelector } from 'app/loadout-drawer/selectors';
+import { Loadout } from 'app/loadout/loadout-types';
 import { useDefinitions } from 'app/manifest/selectors';
 import { showMaterialCount } from 'app/material-counts/MaterialCountsWrappers';
 import { showNotification } from 'app/notifications/notifications';

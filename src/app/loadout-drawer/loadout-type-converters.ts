@@ -5,7 +5,7 @@ import {
   LockArmorEnergyType,
   UpgradeSpendTier,
 } from '@destinyitemmanager/dim-api-types';
-import { Loadout as DimLoadout, LoadoutItem as DimLoadoutItem } from './loadout-types';
+import { Loadout as DimLoadout, LoadoutItem as DimLoadoutItem } from '../loadout/loadout-types';
 
 /**
  * DIM API stores loadouts in a new format, but the app still uses the old format everywhere. These functions convert

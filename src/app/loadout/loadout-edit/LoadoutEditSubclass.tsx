@@ -3,7 +3,7 @@ import ClosableContainer from 'app/dim-ui/ClosableContainer';
 import { t } from 'app/i18next-t';
 import ConnectedInventoryItem from 'app/inventory/ConnectedInventoryItem';
 import ItemPopupTrigger from 'app/inventory/ItemPopupTrigger';
-import { ResolvedLoadoutItem } from 'app/loadout-drawer/loadout-types';
+import { ResolvedLoadoutItem } from 'app/loadout/loadout-types';
 import { AppIcon, powerActionIcon } from 'app/shell/icons';
 import clsx from 'clsx';
 import React, { useMemo } from 'react';

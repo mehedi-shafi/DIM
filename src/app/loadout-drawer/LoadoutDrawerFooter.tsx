@@ -10,7 +10,7 @@ import _ from 'lodash';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Loadout } from './loadout-types';
+import { Loadout } from '../loadout/loadout-types';
 import styles from './LoadoutDrawerFooter.m.scss';
 import { loadoutsSelector } from './selectors';
 

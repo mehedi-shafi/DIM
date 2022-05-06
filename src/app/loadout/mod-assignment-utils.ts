@@ -1,7 +1,7 @@
 import { AssumeArmorMasterwork, LockArmorEnergyType } from '@destinyitemmanager/dim-api-types';
 import { D2ManifestDefinitions } from 'app/destiny2/d2-definitions';
 import { DimItem, DimSockets, PluggableInventoryItemDefinition } from 'app/inventory/item-types';
-import { Assignment, PluggingAction } from 'app/loadout-drawer/loadout-types';
+import { Assignment, PluggingAction } from 'app/loadout/loadout-types';
 import {
   armor2PlugCategoryHashesByName,
   modsWithConditionalStats,

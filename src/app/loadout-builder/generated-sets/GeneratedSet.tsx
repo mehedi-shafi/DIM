@@ -6,7 +6,7 @@ import {
 import { DimItem, PluggableInventoryItemDefinition } from 'app/inventory/item-types';
 import { DimStore } from 'app/inventory/store-types';
 import { editLoadout } from 'app/loadout-drawer/loadout-events';
-import { Loadout, ResolvedLoadoutItem } from 'app/loadout-drawer/loadout-types';
+import { Loadout, ResolvedLoadoutItem } from 'app/loadout/loadout-types';
 import { fitMostMods } from 'app/loadout/mod-assignment-utils';
 import { errorLog } from 'app/utils/log';
 import _ from 'lodash';

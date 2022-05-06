@@ -62,6 +62,7 @@ import { DestinyClass, PlatformErrorCodes } from 'bungie-api-ts/destiny2';
 import { BucketHashes, SocketCategoryHashes } from 'data/d2/generated-enums';
 import produce from 'immer';
 import _ from 'lodash';
+import { Assignment, Loadout, LoadoutItem } from '../loadout/loadout-types';
 import { savePreviousLoadout } from './actions';
 import {
   anyActionFailed,
@@ -76,7 +77,6 @@ import {
   setModResult,
   setSocketOverrideResult,
 } from './loadout-apply-state';
-import { Assignment, Loadout, LoadoutItem } from './loadout-types';
 import { backupLoadout, findItemForLoadout } from './loadout-utils';
 
 // TODO: move this whole file to "loadouts" folder

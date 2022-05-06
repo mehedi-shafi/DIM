@@ -1,7 +1,7 @@
 import ClassIcon from 'app/dim-ui/ClassIcon';
 import { t } from 'app/i18next-t';
 import React from 'react';
-import { Loadout } from './loadout-types';
+import { Loadout } from '../loadout/loadout-types';
 import styles from './LoadoutDrawerHeader.m.scss';
 
 export default function LoadoutDrawerHeader({

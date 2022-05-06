@@ -6,8 +6,8 @@ import { emptyArray } from 'app/utils/empty';
 import { DestinyClass } from 'bungie-api-ts/destiny2';
 import _ from 'lodash';
 import { createSelector } from 'reselect';
+import { Loadout, LoadoutItem } from '../loadout/loadout-types';
 import { convertDimApiLoadoutToLoadout } from './loadout-type-converters';
-import { Loadout, LoadoutItem } from './loadout-types';
 import { getResolutionInfo, getUninstancedLoadoutItem } from './loadout-utils';
 
 /** All loadouts relevant to the current account */

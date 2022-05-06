@@ -25,7 +25,7 @@ import _ from 'lodash';
 import { ActionType, getType } from 'typesafe-actions';
 import * as inventoryActions from '../inventory/actions';
 import * as loadoutActions from '../loadout-drawer/actions';
-import { Loadout as DimLoadout } from '../loadout-drawer/loadout-types';
+import { Loadout as DimLoadout } from '../loadout/loadout-types';
 import * as settingsActions from '../settings/actions';
 import { initialSettingsState, Settings } from '../settings/initial-settings';
 import { DeleteLoadoutUpdateWithRollback, ProfileUpdateWithRollback } from './api-types';

@@ -2,7 +2,7 @@ import CheckButton from 'app/dim-ui/CheckButton';
 import { t } from 'app/i18next-t';
 import { PluggableInventoryItemDefinition } from 'app/inventory/item-types';
 import { unlockedPlugSetItemsSelector } from 'app/inventory/selectors';
-import { Loadout } from 'app/loadout-drawer/loadout-types';
+import { Loadout } from 'app/loadout/loadout-types';
 import { DEFAULT_ORNAMENTS, DEFAULT_SHADER } from 'app/search/d2-known-values';
 import { addIcon, AppIcon } from 'app/shell/icons';
 import { useIsPhonePortrait } from 'app/shell/selectors';

@@ -22,8 +22,8 @@ import {
   updateMods,
   updateModsByBucket,
 } from 'app/loadout-drawer/loadout-drawer-reducer';
-import { Loadout, ResolvedLoadoutItem } from 'app/loadout-drawer/loadout-types';
 import { getModsFromLoadout, getUnequippedItemsForLoadout } from 'app/loadout-drawer/loadout-utils';
+import { Loadout, ResolvedLoadoutItem } from 'app/loadout/loadout-types';
 import LoadoutMods from 'app/loadout/loadout-ui/LoadoutMods';
 import { getItemsAndSubclassFromLoadout, loadoutPower } from 'app/loadout/LoadoutView';
 import { useD2Definitions } from 'app/manifest/selectors';

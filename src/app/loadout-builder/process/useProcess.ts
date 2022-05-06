@@ -4,9 +4,9 @@ import { DimItem, PluggableInventoryItemDefinition } from 'app/inventory/item-ty
 import { DimStore } from 'app/inventory/store-types';
 import { isPluggableItem } from 'app/inventory/store/sockets';
 import { keyByStatHash } from 'app/inventory/store/stats';
-import { ResolvedLoadoutItem } from 'app/loadout-drawer/loadout-types';
 import { calculateAssumedItemEnergy, isArmorEnergyLocked } from 'app/loadout/armor-upgrade-utils';
 import { activityModPlugCategoryHashes } from 'app/loadout/known-values';
+import { ResolvedLoadoutItem } from 'app/loadout/loadout-types';
 import { bucketHashToPlugCategoryHash } from 'app/loadout/mod-utils';
 import {
   armor2PlugCategoryHashesByName,
