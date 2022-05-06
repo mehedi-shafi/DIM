@@ -2,7 +2,7 @@ import { InventoryBucket } from 'app/inventory/inventory-buckets';
 import { PullFromPostmaster } from 'app/inventory/PullFromPostmaster';
 import { DimStore } from 'app/inventory/store-types';
 import { findItemsByBucket } from 'app/inventory/stores-helpers';
-import { postmasterAlmostFull } from 'app/loadout-drawer/postmaster';
+import { postmasterAlmostFull } from 'app/loadout/postmaster';
 import clsx from 'clsx';
 import { BucketHashes } from 'data/d2/generated-enums';
 import React from 'react';

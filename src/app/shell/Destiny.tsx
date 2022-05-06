@@ -13,7 +13,7 @@ import { storesSelector } from 'app/inventory/selectors';
 import { getCurrentStore } from 'app/inventory/stores-helpers';
 import ItemFeedPage from 'app/item-feed/ItemFeedPage';
 import LoadoutDrawerContainer from 'app/loadout-drawer/LoadoutDrawerContainer';
-import { totalPostmasterItems } from 'app/loadout-drawer/postmaster';
+import { totalPostmasterItems } from 'app/loadout/postmaster';
 import { useThunkDispatch } from 'app/store/thunk-dispatch';
 import { RootState } from 'app/store/types';
 import { setAppBadge } from 'app/utils/app-badge';

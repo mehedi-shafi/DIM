@@ -1,11 +1,7 @@
 import { collapsedSelector } from 'app/dim-api/selectors';
 import { t } from 'app/i18next-t';
 import { DimStore } from 'app/inventory/store-types';
-import {
-  postmasterAlmostFull,
-  postmasterSpaceUsed,
-  POSTMASTER_SIZE,
-} from 'app/loadout-drawer/postmaster';
+import { postmasterAlmostFull, postmasterSpaceUsed, POSTMASTER_SIZE } from 'app/loadout/postmaster';
 import { useThunkDispatch } from 'app/store/thunk-dispatch';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
