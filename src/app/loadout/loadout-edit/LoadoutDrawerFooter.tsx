@@ -2,6 +2,7 @@ import { ConfirmButton } from 'app/dim-ui/ConfirmButton';
 import UserGuideLink from 'app/dim-ui/UserGuideLink';
 import { t } from 'app/i18next-t';
 import { getClass } from 'app/inventory/store/character-utils';
+import { Loadout } from 'app/loadout/loadout-types';
 import { loadoutsSelector } from 'app/loadout/selectors';
 import { AppIcon, deleteIcon } from 'app/shell/icons';
 import { RootState } from 'app/store/types';
@@ -11,7 +12,6 @@ import _ from 'lodash';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Loadout } from '../loadout/loadout-types';
 import styles from './LoadoutDrawerFooter.m.scss';
 
 /**

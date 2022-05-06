@@ -12,7 +12,7 @@ import InfusionFinder from 'app/infuse/InfusionFinder';
 import { storesSelector } from 'app/inventory/selectors';
 import { getCurrentStore } from 'app/inventory/stores-helpers';
 import ItemFeedPage from 'app/item-feed/ItemFeedPage';
-import LoadoutDrawerContainer from 'app/loadout-drawer/LoadoutDrawerContainer';
+import LoadoutDrawerContainer from 'app/loadout/loadout-edit/LoadoutDrawerContainer';
 import { totalPostmasterItems } from 'app/loadout/postmaster';
 import { useThunkDispatch } from 'app/store/thunk-dispatch';
 import { RootState } from 'app/store/types';

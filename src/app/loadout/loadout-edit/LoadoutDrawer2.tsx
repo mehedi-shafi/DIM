@@ -1,13 +1,29 @@
 import { D1ManifestDefinitions } from 'app/destiny1/d1-definitions';
 import { D2ManifestDefinitions } from 'app/destiny2/d2-definitions';
 import CheckButton from 'app/dim-ui/CheckButton';
+import Sheet from 'app/dim-ui/Sheet';
 import { t } from 'app/i18next-t';
 import { InventoryBucket } from 'app/inventory/inventory-buckets';
+import { DimItem } from 'app/inventory/item-types';
+import { storesSelector } from 'app/inventory/selectors';
 import { SocketOverrides } from 'app/inventory/store/override-sockets';
 import { getStore } from 'app/inventory/stores-helpers';
 import { showItemPicker } from 'app/item-picker/item-picker';
+import { deleteLoadout, updateLoadout } from 'app/loadout/actions';
 import { pickSubclass } from 'app/loadout/item-utils';
 import { addItem$ } from 'app/loadout/loadout-events';
+import { Loadout, ResolvedLoadoutItem } from 'app/loadout/loadout-types';
+import {
+  addItem,
+  fillLoadoutFromEquipped,
+  fillLoadoutFromUnequipped,
+  LoadoutUpdateFunction,
+  removeItem,
+  setClassType,
+  setClearSpace,
+  setName,
+  setNotes,
+} from 'app/loadout/loadout-updates';
 import {
   createSubclassDefaultSocketOverrides,
   findSameLoadoutItemIndex,
@@ -23,27 +39,11 @@ import produce from 'immer';
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-import Sheet from '../dim-ui/Sheet';
-import { DimItem } from '../inventory/item-types';
-import { storesSelector } from '../inventory/selectors';
-import { deleteLoadout, updateLoadout } from '../loadout/actions';
-import LoadoutEdit from '../loadout/loadout-edit/LoadoutEdit';
-import { Loadout, ResolvedLoadoutItem } from '../loadout/loadout-types';
-import {
-  addItem,
-  fillLoadoutFromEquipped,
-  fillLoadoutFromUnequipped,
-  LoadoutUpdateFunction,
-  removeItem,
-  setClassType,
-  setClearSpace,
-  setName,
-  setNotes,
-} from '../loadout/loadout-updates';
 import styles from './LoadoutDrawer2.m.scss';
 import LoadoutDrawerDropTarget from './LoadoutDrawerDropTarget';
 import LoadoutDrawerFooter from './LoadoutDrawerFooter';
 import LoadoutDrawerHeader from './LoadoutDrawerHeader';
+import LoadoutEdit from './LoadoutEdit';
 
 // TODO: Consider moving editLoadout/addItemToLoadout into Redux (actions + state)
 // TODO: break out a container from the actual loadout drawer so we can lazy load the drawer

@@ -1,3 +1,4 @@
+import { DimItem } from 'app/inventory/item-types';
 import { bucketsSelector, storesSelector } from 'app/inventory/selectors';
 import { emptyArray } from 'app/utils/empty';
 import { itemCanBeInLoadout } from 'app/utils/item-utils';
@@ -7,7 +8,6 @@ import React from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
 import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
-import { DimItem } from '../inventory/item-types';
 import styles from './LoadoutDrawerDropTarget.m.scss';
 
 export const bucketTypesSelector = createSelector(
