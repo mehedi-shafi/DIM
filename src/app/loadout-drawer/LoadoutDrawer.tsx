@@ -40,7 +40,7 @@ import {
 import { addItem$ } from './loadout-events';
 import { Loadout, ResolvedLoadoutItem } from './loadout-types';
 import { createSubclassDefaultSocketOverrides, findSameLoadoutItemIndex } from './loadout-utils';
-import styles from './LoadoutDrawer2.m.scss';
+import styles from './LoadoutDrawer.m.scss';
 import LoadoutDrawerDropTarget from './LoadoutDrawerDropTarget';
 import LoadoutDrawerFooter from './LoadoutDrawerFooter';
 import LoadoutDrawerHeader from './LoadoutDrawerHeader';
@@ -54,7 +54,7 @@ import LoadoutDrawerHeader from './LoadoutDrawerHeader';
  *
  * This component will always be launched after defs/stores are loaded.
  */
-export default function LoadoutDrawer2({
+export default function LoadoutDrawer({
   initialLoadout,
   storeId,
   isNew,
