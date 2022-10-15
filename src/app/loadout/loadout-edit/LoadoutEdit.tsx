@@ -1,4 +1,5 @@
 import { D1ManifestDefinitions } from 'app/destiny1/d1-definitions';
+import { D2Categories } from 'app/destiny2/d2-bucket-categories';
 import { D2ManifestDefinitions } from 'app/destiny2/d2-definitions';
 import { t } from 'app/i18next-t';
 import { D2BucketCategory, InventoryBucket } from 'app/inventory/inventory-buckets';
@@ -174,6 +175,7 @@ export default function LoadoutEdit({
             title={t(`Bucket.${category}`, { metadata: { keys: 'buckets' } })}
             onClear={() => handleClearCategory(category)}
             onFillFromEquipped={() => handleFillCategoryFromEquipped(category)}
+            fillFromEquippedDisabled={disableFillInForCategory(categories, category)}
             onSyncFromEquipped={() => handleSyncCategoryFromEquipped(category)}
             fillFromInventoryCount={getUnequippedItemsForLoadout(store, category).length}
             onFillFromInventory={() => handleFillCategoryFromUnequipped(category)}
@@ -227,4 +229,22 @@ export default function LoadoutEdit({
       </LoadoutEditSection>
     </div>
   );
+}
+
+/**
+ * Disable the "Fill in" menu item if it wouldn't do anything.
+ */
+function disableFillInForCategory(
+  categories: _.Dictionary<ResolvedLoadoutItem[]>,
+  category: D2BucketCategory
+) {
+  const currentItems = categories[category]?.length ?? 0;
+  let maxItems = D2Categories[category].length;
+
+  // Remove the subclass from General
+  if (category === 'General') {
+    maxItems = 4;
+  }
+
+  return currentItems >= maxItems;
 }

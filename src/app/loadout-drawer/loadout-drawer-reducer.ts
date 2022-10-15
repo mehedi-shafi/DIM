@@ -452,7 +452,12 @@ export function syncLoadoutCategoryFromEquipped(
   return produce((loadout) => {
     let categoryHashes = D2Categories[category];
     if (category === 'General') {
-      categoryHashes = categoryHashes.filter((h) => h !== BucketHashes.Subclass);
+      categoryHashes = [
+        BucketHashes.Ghost,
+        BucketHashes.Emblems,
+        BucketHashes.Ships,
+        BucketHashes.Vehicle,
+      ];
     }
 
     // Remove equipped items from this bucket
