@@ -4,6 +4,7 @@ import { D1ManifestDefinitions } from 'app/destiny1/d1-definitions';
 import { D2Categories } from 'app/destiny2/d2-bucket-categories';
 import { D2ManifestDefinitions } from 'app/destiny2/d2-definitions';
 import { t } from 'app/i18next-t';
+import { D2BucketCategory } from 'app/inventory/inventory-buckets';
 import { DimItem } from 'app/inventory/item-types';
 import { DimStore } from 'app/inventory/store-types';
 import { SocketOverrides } from 'app/inventory/store/override-sockets';
@@ -377,7 +378,7 @@ export function fillLoadoutFromEquipped(
   defs: D1ManifestDefinitions | D2ManifestDefinitions,
   store: DimStore,
   /** Fill in from only this specific category */
-  category?: string
+  category?: D2BucketCategory
 ): LoadoutUpdateFunction {
   return produce((loadout) => {
     const equippedItemsByBucket = _.keyBy(
@@ -441,13 +442,78 @@ export function fillLoadoutFromEquipped(
 }
 
 /**
+ * Replace all equipped items from the store's equipped items.
+ */
+export function syncLoadoutCategoryFromEquipped(
+  defs: D2ManifestDefinitions,
+  store: DimStore,
+  category: D2BucketCategory
+): LoadoutUpdateFunction {
+  return produce((loadout) => {
+    let categoryHashes = D2Categories[category];
+    if (category === 'General') {
+      categoryHashes = categoryHashes.filter((h) => h !== BucketHashes.Subclass);
+    }
+
+    // Remove equipped items from this bucket
+    loadout.items = loadout.items.filter(
+      (li) => !(li.equip && categoryHashes.includes(getBucketHashFromItemHash(defs, li.hash) ?? 0))
+    );
+    const newEquippedItems = store.items.filter(
+      (item) =>
+        item.equipped && itemCanBeInLoadout(item) && categoryHashes.includes(item.bucket.hash)
+    );
+    const mods: number[] = [];
+    for (const item of newEquippedItems) {
+      const loadoutItem: LoadoutItem = {
+        id: item.id,
+        hash: item.hash,
+        equip: true,
+        amount: 1,
+      };
+      if (item.bucket.hash === BucketHashes.Subclass) {
+        loadoutItem.socketOverrides = createSocketOverridesFromEquipped(item);
+      }
+      loadout.items.push(loadoutItem);
+      mods.push(...extractArmorModHashes(item));
+    }
+    if (mods.length && (loadout.parameters?.mods ?? []).length === 0) {
+      loadout.parameters = {
+        ...loadout.parameters,
+        mods,
+      };
+    }
+    // Save "fashion" mods for equipped items
+    const modsByBucket = {};
+    for (const item of newEquippedItems.filter((i) => i.bucket.inArmor)) {
+      const plugs = item.sockets
+        ? _.compact(
+            getSocketsByCategoryHash(item.sockets, SocketCategoryHashes.ArmorCosmetics).map(
+              (s) => s.plugged?.plugDef.hash
+            )
+          )
+        : [];
+      if (plugs.length) {
+        modsByBucket[item.bucket.hash] = plugs;
+      }
+    }
+    if (!_.isEmpty(modsByBucket)) {
+      loadout.parameters = {
+        ...loadout.parameters,
+        modsByBucket,
+      };
+    }
+  });
+}
+
+/**
  * Add all the unequipped items on the given character to the loadout.
  */
 export function fillLoadoutFromUnequipped(
   defs: D1ManifestDefinitions | D2ManifestDefinitions,
   store: DimStore,
   /** Fill in from only this specific category */
-  category?: string
+  category?: D2BucketCategory
 ): LoadoutUpdateFunction {
   return (loadout) => {
     const items = getUnequippedItemsForLoadout(store, category);

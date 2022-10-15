@@ -19,6 +19,7 @@ import {
   removeItem,
   removeMod,
   setLoadoutSubclassFromEquipped,
+  syncLoadoutCategoryFromEquipped,
   syncModsFromEquipped,
   updateMods,
   updateModsByBucket,
@@ -108,9 +109,10 @@ export default function LoadoutEdit({
   const handleToggleEquipped = withDefsUpdater(equipItem);
   const handleClearUnsetModsChanged = withUpdater(changeClearMods);
   const handleClearLoadoutParameters = withUpdater(clearLoadoutParameters);
-  const handleFillSubclassFromEquipped = withDefsStoreUpdater(setLoadoutSubclassFromEquipped);
+  const handleSyncSubclassFromEquipped = withDefsStoreUpdater(setLoadoutSubclassFromEquipped);
   const handleFillCategoryFromUnequipped = withDefsStoreUpdater(fillLoadoutFromUnequipped);
   const handleFillCategoryFromEquipped = withDefsStoreUpdater(fillLoadoutFromEquipped);
+  const handleSyncCategoryFromEquipped = withDefsStoreUpdater(syncLoadoutCategoryFromEquipped);
   const handleClearMods = withUpdater(clearMods);
   const onRemoveItem = withDefsUpdater(removeItem);
   const handleClearSubclass = withDefsUpdater(clearSubclass);
@@ -123,7 +125,7 @@ export default function LoadoutEdit({
         <LoadoutEditSection
           title={t('Bucket.Class')}
           onClear={handleClearSubclass}
-          onFillFromEquipped={handleFillSubclassFromEquipped}
+          onSyncFromEquipped={handleSyncSubclassFromEquipped}
         >
           <LoadoutEditBucketDropTarget
             category="Subclass"
@@ -172,6 +174,7 @@ export default function LoadoutEdit({
             title={t(`Bucket.${category}`, { metadata: { keys: 'buckets' } })}
             onClear={() => handleClearCategory(category)}
             onFillFromEquipped={() => handleFillCategoryFromEquipped(category)}
+            onSyncFromEquipped={() => handleSyncCategoryFromEquipped(category)}
             fillFromInventoryCount={getUnequippedItemsForLoadout(store, category).length}
             onFillFromInventory={() => handleFillCategoryFromUnequipped(category)}
             onClearLoadoutParameters={
