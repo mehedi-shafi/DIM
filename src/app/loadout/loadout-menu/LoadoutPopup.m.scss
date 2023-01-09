@@ -76,7 +76,7 @@
       white-space: nowrap !important;
       line-height: 35px;
       :global(.app-icon),
-      img {
+      > img {
         width: 12px;
         margin-right: 5px;
         text-align: center;
@@ -113,6 +113,9 @@
     }
     > span:first-child > img:first-child {
       filter: none;
+    }
+    .note {
+      color: black;
     }
   }
 

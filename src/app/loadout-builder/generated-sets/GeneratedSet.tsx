@@ -137,16 +137,14 @@ function GeneratedSet({
   return (
     <div className={styles.container} style={style} ref={forwardedRef}>
       <div className={styles.build}>
-        <div className={styles.header}>
-          <SetStats
-            stats={set.stats}
-            autoStatMods={set.statMods}
-            maxPower={getPower(displayedItems)}
-            statOrder={statOrder}
-            enabledStats={enabledStats}
-            existingLoadoutName={existingLoadout?.name}
-          />
-        </div>
+        <SetStats
+          stats={set.stats}
+          autoStatMods={set.statMods}
+          maxPower={getPower(displayedItems)}
+          statOrder={statOrder}
+          enabledStats={enabledStats}
+          existingLoadoutName={existingLoadout?.name}
+        />
         <div className={styles.items}>
           {displayedItems.map((item, i) => (
             <GeneratedSetItem

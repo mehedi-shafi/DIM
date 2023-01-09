@@ -50,7 +50,7 @@ function SetStats({
   return (
     <div className={clsx(styles.container, className)}>
       <div className={styles.tierLightContainer}>
-        <span className={clsx(styles.tier, styles.tierLightSegment)}>
+        <span className={clsx(styles.tier)}>
           {t('LoadoutBuilder.TierNumber', {
             tier: enabledBaseTier,
           })}
@@ -72,39 +72,38 @@ function SetStats({
             })}
           </div>
         )}
-        <span className={styles.light}>
-          <AppIcon icon={powerIndicatorIcon} className={clsx(styles.statIcon)} /> {maxPower}
-        </span>
-        {existingLoadoutName ? (
-          <span className={styles.existingLoadout}>
-            {t('LoadoutBuilder.ExistingLoadout')}:{' '}
-            <span className={styles.loadoutName}>{existingLoadoutName}</span>
-          </span>
-        ) : null}
       </div>
-      <div className={styles.statSegmentContainer}>
-        {statOrder.map((statHash) => (
-          <PressTip
-            key={statHash}
-            tooltip={() => (
-              <StatTooltip
-                stat={{
-                  hash: statHash,
-                  name: statDefs[statHash].displayProperties.name,
-                  value: statsWithAutoMods[statHash],
-                  description: statDefs[statHash].displayProperties.description,
-                }}
-              />
-            )}
-          >
-            <Stat
-              isActive={enabledStats.has(statHash)}
-              stat={statDefs[statHash]}
-              value={statsWithAutoMods[statHash]}
+      {statOrder.map((statHash) => (
+        <PressTip
+          key={statHash}
+          tooltip={() => (
+            <StatTooltip
+              stat={{
+                hash: statHash,
+                name: statDefs[statHash].displayProperties.name,
+                value: statsWithAutoMods[statHash],
+                description: statDefs[statHash].displayProperties.description,
+              }}
             />
-          </PressTip>
-        ))}
-      </div>
+          )}
+        >
+          <Stat
+            isActive={enabledStats.has(statHash)}
+            stat={statDefs[statHash]}
+            value={statsWithAutoMods[statHash]}
+          />
+        </PressTip>
+      ))}
+      <span className={styles.light}>
+        <AppIcon icon={powerIndicatorIcon} />
+        {maxPower}
+      </span>
+      {existingLoadoutName ? (
+        <span className={styles.existingLoadout}>
+          {t('LoadoutBuilder.ExistingLoadout')}:{' '}
+          <span className={styles.loadoutName}>{existingLoadoutName}</span>
+        </span>
+      ) : null}
     </div>
   );
 }
@@ -124,6 +123,7 @@ function Stat({
         [styles.nonActiveStat]: !isActive,
       })}
     >
+      <BungieImage className={clsx(styles.statIcon)} src={stat.displayProperties.icon} />
       <span
         className={clsx(styles.tier, {
           [styles.halfTierValue]: isActive && remEuclid(value, 10) >= 5,
@@ -133,8 +133,6 @@ function Stat({
           tier: statTierWithHalf(value),
         })}
       </span>
-      <BungieImage className={clsx(styles.statIcon)} src={stat.displayProperties.icon} />{' '}
-      {stat.displayProperties.name}
     </span>
   );
 }
