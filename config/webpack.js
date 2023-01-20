@@ -440,6 +440,8 @@ module.exports = (env) => {
         // Request the PresentationNodes component only needed during
         // Solstice to associate each character with a set of triumphs.
         '$featureFlags.solsticePresentationNodes': JSON.stringify(false),
+        // Disable the "action queue" that forces manual moves and loadouts to happen one by one.
+        '$featureFlags.removeActionQueue': JSON.stringify(!env.release),
       }),
 
       new LodashModuleReplacementPlugin({

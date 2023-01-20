@@ -3,6 +3,9 @@ const _queue: Promise<unknown>[] = [];
 // A global queue of functions that will execute one after the other. The function must return a promise.
 // fn is either a blocking function or a function that returns a promise
 export function queueAction<K>(fn: () => Promise<K>): Promise<K> {
+  if ($featureFlags.removeActionQueue) {
+    return fn();
+  }
   const headPromise: Promise<unknown> = _queue.length
     ? _queue[_queue.length - 1]
     : Promise.resolve();

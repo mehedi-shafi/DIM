@@ -47,6 +47,10 @@ declare const $featureFlags: {
    * Solstice to associate each character with a set of triumphs.
    */
   solsticePresentationNodes: boolean;
+  /**
+   * Disable the "action queue" that forces manual moves and loadouts to happen one by one.
+   */
+  removeActionQueue: boolean;
 };
 
 declare function ga(...params: string[]): void;
