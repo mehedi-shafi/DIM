@@ -22,6 +22,8 @@ export interface ItemCategoryTreeNode {
   terminal?: boolean;
 }
 
+export type ItemCategorySelection = ItemCategoryTreeNode[];
+
 // Each class has the same armor
 const armorCategories = [
   {
@@ -339,8 +341,8 @@ export default function ItemTypeSelector({
   onSelection,
 }: {
   selectionTree: ItemCategoryTreeNode;
-  selection: ItemCategoryTreeNode[];
-  onSelection: (selection: ItemCategoryTreeNode[]) => void;
+  selection: ItemCategorySelection;
+  onSelection: (selection: ItemCategorySelection) => void;
 }) {
   const defs = useDefinitions()!;
   const filteredItems = useSelector(filteredItemsSelector);

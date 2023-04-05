@@ -51,7 +51,7 @@ import { itemIncludesCategories } from './filtering-utils';
 import ItemActions, { TagCommandInfo } from './ItemActions';
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from './ItemTable.m.scss';
-import { armorTopLevelCatHashes, ItemCategoryTreeNode } from './ItemTypeSelector';
+import { armorTopLevelCatHashes, ItemCategorySelection } from './ItemTypeSelector';
 import { ColumnDefinition, ColumnSort, Row, SortDirection } from './table-types';
 
 const possibleStyles = styles as unknown as StringLookup<string>;
@@ -74,7 +74,7 @@ const downloadButtonSettings = [
 
 const MemoRow = React.memo(TableRow);
 
-export default function ItemTable({ categories }: { categories: ItemCategoryTreeNode[] }) {
+export default function ItemTable({ categories }: { categories: ItemCategorySelection }) {
   const [columnSorts, setColumnSorts] = useState<ColumnSort[]>([
     { columnId: 'name', sort: SortDirection.ASC },
   ]);

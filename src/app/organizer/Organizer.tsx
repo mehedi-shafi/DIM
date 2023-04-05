@@ -11,7 +11,11 @@ import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router';
 import ItemTable from './ItemTable';
-import ItemTypeSelector, { getSelectionTree, ItemCategoryTreeNode } from './ItemTypeSelector';
+import ItemTypeSelector, {
+  ItemCategorySelection,
+  ItemCategoryTreeNode,
+  getSelectionTree,
+} from './ItemTypeSelector';
 import styles from './Organizer.m.scss';
 
 interface Props {
@@ -26,7 +30,7 @@ interface Props {
 function drillToSelection(
   selectionTree: ItemCategoryTreeNode | undefined,
   selectedItemCategoryHashes: number[]
-): ItemCategoryTreeNode[] {
+): ItemCategorySelection {
   const selectedItemCategoryHash = selectedItemCategoryHashes[0];
 
   if (
@@ -93,7 +97,7 @@ export default function Organizer({ account }: Props) {
   // When new item categories are selected, set the URL to the new selection, and
   // allow the URL to set the state. The URL is our state store, and this means
   // it's easy to link to a selection or preserve state across reloads.
-  const onSelection = (selection: ItemCategoryTreeNode[]) => {
+  const onSelection = (selection: ItemCategorySelection) => {
     params.set(
       'category',
       selection
