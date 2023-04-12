@@ -2,7 +2,7 @@ import { InfuseDirection } from '@destinyitemmanager/dim-api-types';
 import { t } from 'app/i18next-t';
 import { applyLoadout } from 'app/loadout-drawer/loadout-apply';
 import { LoadoutItem } from 'app/loadout-drawer/loadout-types';
-import SearchBar from 'app/search/SearchBar';
+import SearchBar from 'app/search/ItemSearchBar';
 import { useSetting } from 'app/settings/hooks';
 import { useThunkDispatch } from 'app/store/thunk-dispatch';
 import { DimThunkDispatch } from 'app/store/types';
@@ -22,8 +22,8 @@ import { showNotification } from '../notifications/notifications';
 import { filterFactorySelector } from '../search/search-filter';
 import { AppIcon, faArrowCircleDown, faEquals, faRandom, helpIcon, plusIcon } from '../shell/icons';
 import { chainComparator, compareBy, reverseComparator } from '../utils/comparators';
-import { showInfuse$ } from './infuse';
 import './InfusionFinder.scss';
+import { showInfuse$ } from './infuse';
 
 const itemComparator = chainComparator(
   reverseComparator(compareBy((item: DimItem) => item.power)),
